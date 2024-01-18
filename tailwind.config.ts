@@ -84,6 +84,29 @@ const config: Config = {
           white: "#FFFFFF",
         },
       },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"], // Make sure Poppins is imported in your project
+      },
+      fontSize: {
+        overline: ["10px", { lineHeight: "normal" }], // Adjust line-height as needed
+        caption: ["12px", { lineHeight: "normal" }],
+        body2: ["14px", { lineHeight: "normal" }],
+        body1: ["16px", { lineHeight: "normal" }],
+        subtitle2: ["18px", { lineHeight: "normal" }],
+        subtitle1: ["20px", { lineHeight: "normal" }],
+        header6: ["24px", { lineHeight: "normal" }],
+        header5: ["30px", { lineHeight: "normal" }],
+        header4: ["36px", { lineHeight: "normal" }],
+        header3: ["48px", { lineHeight: "normal" }],
+        header2: ["60px", { lineHeight: "normal" }],
+        header1: ["72px", { lineHeight: "normal" }],
+      },
+      fontWeight: {
+        regular: "400",
+        medium: "500",
+        semibold: "600",
+        bold: "700",
+      },
     },
   },
   plugins: [],
