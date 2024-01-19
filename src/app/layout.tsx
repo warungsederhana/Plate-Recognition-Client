@@ -18,9 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className} bg-info-100`}>
-        <CustomNavbar />
         <main className="relative overflow-hidden">{children}</main>
-        <Footer />
       </body>
     </html>
   );

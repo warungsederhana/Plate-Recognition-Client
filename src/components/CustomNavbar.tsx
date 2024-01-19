@@ -9,12 +9,12 @@ function NavList() {
   return (
     <ul className="my-2 flex flex-col gap-2 font-bold text-body1 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:text-subtitle2 text-primary-700">
       <li className="p-1">
-        <Link href="#" className="flex items-center hover:text-blue-500 transition-colors">
+        <Link href="/signin" className="flex items-center hover:text-blue-500 transition-colors">
           Sign In
         </Link>
       </li>
       <li className="p-1">
-        <Link href="#" className="flex items-center hover:text-blue-500 transition-colors">
+        <Link href="/signup" className="flex items-center hover:text-blue-500 transition-colors">
           Sign Up
         </Link>
       </li>
