@@ -39,7 +39,7 @@ export default function CustomNavbar() {
     <Navbar
       shadow={false}
       fullWidth={true}
-      className="mx-auto w-full px-8 py-3 lg:px-28 bg-info-100"
+      className="mx-auto w-full px-8 py-3 md:px-16 lg:px-28 bg-info-100"
       blurred={false}
       placeholder={undefined}
     >
