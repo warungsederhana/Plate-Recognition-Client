@@ -73,8 +73,8 @@ const ScanPage = () => {
               value={"B **** RKE"}
               disabled={true}
               size="lg"
-              placeholder="example@email.com"
-              className="max-w-80 flex-1"
+              placeholder="B **** RKE"
+              className="md:w-3/12"
             />
 
             <div className="flex flex-col gap-4 w-full max-w-md items-center md:flex-row ">
@@ -85,7 +85,6 @@ const ScanPage = () => {
                 value={""}
                 size="lg"
                 placeholder="31067**********"
-                className="max-w-80 flex-1" // Use flex-1 for the input to take available space
               />
               <Button
                 fullWidth={false}
