@@ -13,7 +13,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-primary-700 text-info-400 py-6">
+    <footer className="bg-primary-700 text-info-400 py-4">
       <div className="container mx-auto text-center">
         <p className="text-sm sm:text-base md:text-lg lg:text-xl">
           © {currentYear} Plate Recognition App
