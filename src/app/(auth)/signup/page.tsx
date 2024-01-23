@@ -6,7 +6,7 @@ import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
 import toast from "react-toastify";
 import PasswordInput from "@/components/PasswordInput";
-import { register } from "@/lib/firebase/services";
+import { loginWithGoogle, register } from "@/lib/firebase/services";
 
 interface RegisterUser {
   email: string;
@@ -172,6 +172,7 @@ const SignUpPage = () => {
                 className="mt-6 bg-white flex flex-row justify-center items-center"
                 fullWidth
                 placeholder={undefined}
+                onClick={loginWithGoogle}
               >
                 <Image
                   className="m-0 p-0"

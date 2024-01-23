@@ -5,7 +5,10 @@ import Image from "next/image";
 import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
 import PasswordInput from "@/components/PasswordInput";
-import { login } from "@/lib/firebase/services";
+import { login, loginWithGoogle } from "@/lib/firebase/services";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthError } from "firebase/auth";
 
 interface LoginUser {
   email: string;
@@ -67,16 +70,43 @@ const SignInPage = () => {
     console.log(user);
 
     try {
-      login(user.email, user.password);
+      await login(user.email, user.password);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
+      if (error instanceof Error) {
+        let errorMessage = "Terjadi kesalahan saat login.";
+
+        // Menyesuaikan pesan error berdasarkan kode error
+        switch ((error as AuthError).code) {
+          case "auth/invalid-credential":
+            errorMessage = "Kredensial tidak valid.";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Email yang dimasukkan tidak valid.";
+            break;
+          case "auth/user-disabled":
+            errorMessage = "Akun pengguna telah dinonaktifkan.";
+            break;
+          case "auth/user-not-found":
+            errorMessage = "Pengguna tidak ditemukan.";
+            break;
+          case "auth/wrong-password":
+            errorMessage = "Password salah.";
+            break;
+          default:
+            errorMessage = error.message; // Pesan default dari Firebase
+        }
+
+        // Menampilkan toast dengan pesan error yang telah disesuaikan
+        toast.error(errorMessage);
+      }
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <section className="flex flex-wrap w-full min-h-screen">
         {/* Div kiri */}
         <div className="w-full lg:w-1/2 flex justify-center items-center p-8 md:p-16">
@@ -139,6 +169,7 @@ const SignInPage = () => {
                 className="mt-6 bg-white flex flex-row justify-center items-center"
                 fullWidth
                 placeholder={undefined}
+                onClick={loginWithGoogle}
               >
                 <Image
                   className="m-0 p-0"
