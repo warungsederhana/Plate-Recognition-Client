@@ -4,10 +4,76 @@ import React from "react";
 import Image from "next/image";
 import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
+import PasswordInput from "@/components/PasswordInput";
+import { login } from "@/lib/firebase/services";
+
+interface LoginUser {
+  email: string;
+  password: string;
+}
 
 const SignInPage = () => {
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const isValidEmail = (email: string) => {
+    const regex = /^\S+@\S+\.\S+$/;
+
+    if (email.length === 0) {
+      setEmailError("Email tidak boleh kosong.");
+      return false;
+    }
+
+    if (!regex.test(email)) {
+      setEmailError("Email tidak valid.");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  const isValidPassword = (password: string) => {
+    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*;]).{8,}$/;
+
+    if (password.length === 0) {
+      setPasswordError("Password tidak boleh kosong.");
+      return false;
+    }
+
+    if (password.length < 8) {
+      setPasswordError("Password harus memiliki minimal 8 karakter.");
+      return false;
+    }
+
+    if (!regex.test(password)) {
+      setPasswordError("Password harus mengandung huruf kapital, angka, dan karakter spesial.");
+      return false;
+    }
+
+    setPasswordError("");
+    return true;
+  };
+
+  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setIsLoading(true);
+    e.preventDefault();
+    if (!isValidEmail(email) || !isValidPassword(password)) {
+      return;
+    }
+    const user: LoginUser = { email, password };
+    console.log(user);
+
+    try {
+      login(user.email, user.password);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -28,26 +94,36 @@ const SignInPage = () => {
             </h1>
             <form className="mt-8 mb-2 w-full">
               <div className="mb-1 flex flex-col gap-6">
-                <Input
-                  crossOrigin={undefined}
-                  type="email"
-                  label="Email"
-                  value={email}
-                  size="lg"
-                  placeholder="example@email.com"
-                />
+                <div>
+                  <Input
+                    crossOrigin={undefined}
+                    type="email"
+                    label="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    size="lg"
+                    placeholder="example@email.com"
+                  />
+                  <p className="text-overline text-danger-500 px-2 mt-1">
+                    {emailError ? emailError : null}
+                  </p>
+                </div>
 
-                <Input
-                  crossOrigin={undefined}
-                  type="password"
-                  label="Password"
+                <PasswordInput
                   value={password}
-                  size="lg"
-                  placeholder="********"
+                  onChange={(e) => setPassword(e.target.value)}
+                  label="Password"
+                  error={passwordError}
                 />
               </div>
 
-              <Button size="lg" className="mt-6 bg-primary-700" fullWidth placeholder={undefined}>
+              <Button
+                size="lg"
+                className="mt-6 bg-primary-700"
+                fullWidth
+                placeholder={undefined}
+                onClick={(e) => handleLogin(e)}
+              >
                 Login
               </Button>
 
