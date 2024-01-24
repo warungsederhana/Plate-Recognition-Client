@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { destroyCookie } from "nookies";
-import path from "path";
 
 export function Sidebar() {
   const [open, setOpen] = React.useState(false);
@@ -68,7 +67,7 @@ export function Sidebar() {
         </div>
 
         <List placeholder={undefined}>
-          <Link href="/scan">
+          <Link href="/dashboard/scan">
             <ListItem placeholder={undefined}>
               <ListItemPrefix placeholder={undefined}>
                 <Image src={"/img/barcode.svg"} alt={""} width={24} height={24} />
@@ -77,7 +76,7 @@ export function Sidebar() {
             </ListItem>
           </Link>
 
-          <Link href="/tax-payment">
+          <Link href="/dashboard/tax-payment">
             <ListItem placeholder={undefined}>
               <ListItemPrefix placeholder={undefined}>
                 <Image src={"/img/payment.svg"} alt={""} width={24} height={24} />

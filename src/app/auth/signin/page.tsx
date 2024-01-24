@@ -82,9 +82,9 @@ const SignInPage = () => {
         path: "/",
       });
 
-      toast.success("Login berhasil.");
       setIsLoading(false);
       router.push("/dashboard/scan");
+      toast.success("Login berhasil.");
     } catch (error) {
       setIsLoading(false);
       if (error instanceof Error) {
