@@ -5,6 +5,8 @@ import {
   UserCredential,
   AuthError,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 export const register = async (
@@ -64,5 +66,24 @@ export const login = async (email: string, password: string): Promise<void> => {
       console.error("An unexpected error occurred", error);
       throw new Error("An unexpected error occurred");
     }
+  }
+};
+
+export const loginWithGoogle = async () => {
+  try {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const result = await signInWithPopup(auth, provider);
+    // Dapat menggunakan Google Access Token dan user info di sini
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential?.accessToken;
+    const user = result.user;
+
+    console.log(`Token: ${token}`);
+    console.log(`User: ${user}`);
+  } catch (error) {
+    // Handle Errors here
+    console.error("Error during Google login", error);
   }
 };

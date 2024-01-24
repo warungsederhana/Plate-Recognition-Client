@@ -37,7 +37,7 @@ const ScanPage = () => {
     <>
       <section className="mx-auto w-full h-full min-h-screen flex flex-col gap-2 px-8 mb-16 items-center lg:px-28">
         {/* SECTION 1 */}
-        <div className="w-full flex flex-1 flex-col gap-2 pt-6 ">
+        <div className="w-full flex flex-col gap-2 pt-6 ">
           <h1 className="flex-1 font-bold text-header5 text-primary-700">AI Plate Recognition</h1>
           <p className="flex-1 font-regular text-body1 text-black text-justify">
             Unggah gambar plat kendaraan Anda untuk mendeteksi otomatis dengan layanan AI Plate
@@ -48,7 +48,7 @@ const ScanPage = () => {
         </div>
 
         {/* SECTION 2 */}
-        <div className="w-full flex flex-1 flex-col py-2 pb-4">
+        <div className="w-full flex flex-col py-2 pb-4">
           <h1 className="flex-1 font-bold text-header5 text-primary-700 pb-2">Upload Gambar</h1>
           {/* className="p-16 border border-red-500" */}
           <CustomDropZone

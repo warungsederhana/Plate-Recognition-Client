@@ -4,19 +4,23 @@ import React from "react";
 import Image from "next/image";
 import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
+import toast from "react-toastify";
 import PasswordInput from "@/components/PasswordInput";
-import { login } from "@/lib/firebase/services";
+import { loginWithGoogle, register } from "@/lib/firebase/services";
 
-interface LoginUser {
+interface RegisterUser {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-const SignInPage = () => {
+const SignUpPage = () => {
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
   const isValidEmail = (email: string) => {
@@ -57,17 +61,36 @@ const SignInPage = () => {
     return true;
   };
 
-  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const isValidConfirmPassword = (confirmPassword: string) => {
+    if (confirmPassword.length === 0) {
+      setConfirmPasswordError("Konfirmasi password tidak boleh kosong.");
+      return false;
+    }
+
+    if (confirmPassword !== password) {
+      setConfirmPasswordError("Password tidak sama.");
+      return false;
+    }
+
+    setConfirmPasswordError("");
+    return true;
+  };
+
+  const handleRegister = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setIsLoading(true);
     e.preventDefault();
-    if (!isValidEmail(email) || !isValidPassword(password)) {
+    if (
+      !isValidEmail(email) ||
+      !isValidPassword(password) ||
+      !isValidConfirmPassword(confirmPassword)
+    ) {
       return;
     }
-    const user: LoginUser = { email, password };
+    const user: RegisterUser = { email, password, confirmPassword };
     console.log(user);
 
     try {
-      login(user.email, user.password);
+      register(user.email, user.password, user.confirmPassword);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -90,7 +113,7 @@ const SignInPage = () => {
               Selamat Datang
             </h1>
             <h1 className="font-bold text-header6 lg:text-header5 text-primary-700">
-              Silahkan Sign In ke Akun Anda
+              Sign Up untuk Membuat Akun
             </h1>
             <form className="mt-8 mb-2 w-full">
               <div className="mb-1 flex flex-col gap-6">
@@ -108,13 +131,22 @@ const SignInPage = () => {
                     {emailError ? emailError : null}
                   </p>
                 </div>
-
-                <PasswordInput
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  label="Password"
-                  error={passwordError}
-                />
+                <div>
+                  <PasswordInput
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    label="Password"
+                    error={passwordError}
+                  />
+                </div>
+                <div>
+                  <PasswordInput
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    label="Confirm Password"
+                    error={confirmPasswordError}
+                  />
+                </div>
               </div>
 
               <Button
@@ -122,15 +154,16 @@ const SignInPage = () => {
                 className="mt-6 bg-primary-700"
                 fullWidth
                 placeholder={undefined}
-                onClick={(e) => handleLogin(e)}
+                onClick={(e) => handleRegister(e)}
+                loading={isLoading}
               >
-                Login
+                Register
               </Button>
 
               <p className="mt-4 text-center text-body2 text-neutrals-500">
-                Belum memiliki akun?{" "}
-                <Link href="/signup" className="hover:text-primary-700 hover:font-bold">
-                  Ayo Daftar
+                Sudah memiliki akun?{" "}
+                <Link href="/signin" className="hover:text-primary-700 hover:font-bold">
+                  Ayo Masuk
                 </Link>
               </p>
 
@@ -139,6 +172,7 @@ const SignInPage = () => {
                 className="mt-6 bg-white flex flex-row justify-center items-center"
                 fullWidth
                 placeholder={undefined}
+                onClick={loginWithGoogle}
               >
                 <Image
                   className="m-0 p-0"
@@ -156,7 +190,7 @@ const SignInPage = () => {
         {/* Div kanan */}
         <div className="hidden lg:flex w-full lg:w-1/2 justify-center items-center bg-primary-700 p-8 md:p-16">
           <Image
-            src="/img/login-img.svg"
+            src="/img/sign-up-img.svg"
             alt="Login page image"
             width={500}
             height={500}
@@ -168,4 +202,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default SignUpPage;

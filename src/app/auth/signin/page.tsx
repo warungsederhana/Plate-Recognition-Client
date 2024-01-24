@@ -4,23 +4,22 @@ import React from "react";
 import Image from "next/image";
 import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
-import toast from "react-toastify";
 import PasswordInput from "@/components/PasswordInput";
-import { register } from "@/lib/firebase/services";
+import { login, loginWithGoogle } from "@/lib/firebase/services";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthError } from "firebase/auth";
 
-interface RegisterUser {
+interface LoginUser {
   email: string;
   password: string;
-  confirmPassword: string;
 }
 
-const SignUpPage = () => {
+const SignInPage = () => {
   const [email, setEmail] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
   const isValidEmail = (email: string) => {
@@ -61,45 +60,53 @@ const SignUpPage = () => {
     return true;
   };
 
-  const isValidConfirmPassword = (confirmPassword: string) => {
-    if (confirmPassword.length === 0) {
-      setConfirmPasswordError("Konfirmasi password tidak boleh kosong.");
-      return false;
-    }
-
-    if (confirmPassword !== password) {
-      setConfirmPasswordError("Password tidak sama.");
-      return false;
-    }
-
-    setConfirmPasswordError("");
-    return true;
-  };
-
-  const handleRegister = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setIsLoading(true);
     e.preventDefault();
-    if (
-      !isValidEmail(email) ||
-      !isValidPassword(password) ||
-      !isValidConfirmPassword(confirmPassword)
-    ) {
+    if (!isValidEmail(email) || !isValidPassword(password)) {
       return;
     }
-    const user: RegisterUser = { email, password, confirmPassword };
+    const user: LoginUser = { email, password };
     console.log(user);
 
     try {
-      register(user.email, user.password, user.confirmPassword);
+      await login(user.email, user.password);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
+      if (error instanceof Error) {
+        let errorMessage = "Terjadi kesalahan saat login.";
+
+        // Menyesuaikan pesan error berdasarkan kode error
+        switch ((error as AuthError).code) {
+          case "auth/invalid-credential":
+            errorMessage = "Kredensial tidak valid.";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Email yang dimasukkan tidak valid.";
+            break;
+          case "auth/user-disabled":
+            errorMessage = "Akun pengguna telah dinonaktifkan.";
+            break;
+          case "auth/user-not-found":
+            errorMessage = "Pengguna tidak ditemukan.";
+            break;
+          case "auth/wrong-password":
+            errorMessage = "Password salah.";
+            break;
+          default:
+            errorMessage = error.message; // Pesan default dari Firebase
+        }
+
+        // Menampilkan toast dengan pesan error yang telah disesuaikan
+        toast.error(errorMessage);
+      }
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <section className="flex flex-wrap w-full min-h-screen">
         {/* Div kiri */}
         <div className="w-full lg:w-1/2 flex justify-center items-center p-8 md:p-16">
@@ -113,7 +120,7 @@ const SignUpPage = () => {
               Selamat Datang
             </h1>
             <h1 className="font-bold text-header6 lg:text-header5 text-primary-700">
-              Sign Up untuk Membuat Akun
+              Silahkan Sign In ke Akun Anda
             </h1>
             <form className="mt-8 mb-2 w-full">
               <div className="mb-1 flex flex-col gap-6">
@@ -131,22 +138,13 @@ const SignUpPage = () => {
                     {emailError ? emailError : null}
                   </p>
                 </div>
-                <div>
-                  <PasswordInput
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    label="Password"
-                    error={passwordError}
-                  />
-                </div>
-                <div>
-                  <PasswordInput
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    label="Confirm Password"
-                    error={confirmPasswordError}
-                  />
-                </div>
+
+                <PasswordInput
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  label="Password"
+                  error={passwordError}
+                />
               </div>
 
               <Button
@@ -154,16 +152,15 @@ const SignUpPage = () => {
                 className="mt-6 bg-primary-700"
                 fullWidth
                 placeholder={undefined}
-                onClick={(e) => handleRegister(e)}
-                loading={isLoading}
+                onClick={(e) => handleLogin(e)}
               >
-                Register
+                Login
               </Button>
 
               <p className="mt-4 text-center text-body2 text-neutrals-500">
-                Sudah memiliki akun?{" "}
-                <Link href="/signin" className="hover:text-primary-700 hover:font-bold">
-                  Ayo Masuk
+                Belum memiliki akun?{" "}
+                <Link href="/signup" className="hover:text-primary-700 hover:font-bold">
+                  Ayo Daftar
                 </Link>
               </p>
 
@@ -172,6 +169,7 @@ const SignUpPage = () => {
                 className="mt-6 bg-white flex flex-row justify-center items-center"
                 fullWidth
                 placeholder={undefined}
+                onClick={loginWithGoogle}
               >
                 <Image
                   className="m-0 p-0"
@@ -189,7 +187,7 @@ const SignUpPage = () => {
         {/* Div kanan */}
         <div className="hidden lg:flex w-full lg:w-1/2 justify-center items-center bg-primary-700 p-8 md:p-16">
           <Image
-            src="/img/sign-up-img.svg"
+            src="/img/login-img.svg"
             alt="Login page image"
             width={500}
             height={500}
@@ -201,4 +199,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default SignInPage;
