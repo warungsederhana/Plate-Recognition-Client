@@ -6,9 +6,11 @@ import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
 import PasswordInput from "@/components/PasswordInput";
 import { login, loginWithGoogle } from "@/lib/firebase/services";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthError } from "firebase/auth";
+import { setCookie } from "nookies";
+import { useRouter } from "next/navigation";
 
 interface LoginUser {
   email: string;
@@ -21,6 +23,7 @@ const SignInPage = () => {
   const [password, setPassword] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
 
   const isValidEmail = (email: string) => {
     const regex = /^\S+@\S+\.\S+$/;
@@ -64,14 +67,24 @@ const SignInPage = () => {
     setIsLoading(true);
     e.preventDefault();
     if (!isValidEmail(email) || !isValidPassword(password)) {
+      setIsLoading(false);
       return;
     }
     const user: LoginUser = { email, password };
-    console.log(user);
 
     try {
-      await login(user.email, user.password);
+      const token = await login(user.email, user.password);
+      console.log(token);
+
+      localStorage.setItem("access_token", `Bearer ${token}`);
+      setCookie(null, "access_token", token, {
+        maxAge: 30 * 24 * 60 * 60, // 30 hari
+        path: "/",
+      });
+
+      toast.success("Login berhasil.");
       setIsLoading(false);
+      router.push("/dashboard/scan");
     } catch (error) {
       setIsLoading(false);
       if (error instanceof Error) {
@@ -106,7 +119,6 @@ const SignInPage = () => {
 
   return (
     <>
-      <ToastContainer />
       <section className="flex flex-wrap w-full min-h-screen">
         {/* Div kiri */}
         <div className="w-full lg:w-1/2 flex justify-center items-center p-8 md:p-16">
@@ -150,16 +162,17 @@ const SignInPage = () => {
               <Button
                 size="lg"
                 className="mt-6 bg-primary-700"
-                fullWidth
+                fullWidth={true}
                 placeholder={undefined}
+                disabled={isLoading ? true : false}
                 onClick={(e) => handleLogin(e)}
               >
-                Login
+                {isLoading ? "Loading..." : "Login"}
               </Button>
 
               <p className="mt-4 text-center text-body2 text-neutrals-500">
                 Belum memiliki akun?{" "}
-                <Link href="/signup" className="hover:text-primary-700 hover:font-bold">
+                <Link href="/auth/signup" className="hover:text-primary-700 hover:font-bold">
                   Ayo Daftar
                 </Link>
               </p>
