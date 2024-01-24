@@ -4,9 +4,11 @@ import React from "react";
 import Image from "next/image";
 import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
-import toast from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import PasswordInput from "@/components/PasswordInput";
 import { loginWithGoogle, register } from "@/lib/firebase/services";
+import { useRouter } from "next/navigation";
 
 interface RegisterUser {
   email: string;
@@ -22,6 +24,7 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [confirmPasswordError, setConfirmPasswordError] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
 
   const isValidEmail = (email: string) => {
     const regex = /^\S+@\S+\.\S+$/;
@@ -87,11 +90,12 @@ const SignUpPage = () => {
       return;
     }
     const user: RegisterUser = { email, password, confirmPassword };
-    console.log(user);
 
     try {
-      register(user.email, user.password, user.confirmPassword);
+      await register(user.email, user.password, user.confirmPassword);
       setIsLoading(false);
+      toast.success("Berhasil membuat akun.");
+      router.push("/auth/signin");
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -162,7 +166,7 @@ const SignUpPage = () => {
 
               <p className="mt-4 text-center text-body2 text-neutrals-500">
                 Sudah memiliki akun?{" "}
-                <Link href="/signin" className="hover:text-primary-700 hover:font-bold">
+                <Link href="/auth/signin" className="hover:text-primary-700 hover:font-bold">
                   Ayo Masuk
                 </Link>
               </p>

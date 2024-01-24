@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Navbar, Collapse, Typography, IconButton, NavbarProps } from "@material-tailwind/react";
+import { Navbar, Collapse, IconButton } from "@material-tailwind/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,12 +9,18 @@ function NavList() {
   return (
     <ul className="my-2 flex flex-col gap-2 font-bold text-body1 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 lg:text-subtitle2 text-primary-700">
       <li className="p-1">
-        <Link href="/signin" className="flex items-center hover:text-blue-500 transition-colors">
+        <Link
+          href="/auth/signin"
+          className="flex items-center hover:text-blue-500 transition-colors"
+        >
           Sign In
         </Link>
       </li>
       <li className="p-1">
-        <Link href="/signup" className="flex items-center hover:text-blue-500 transition-colors">
+        <Link
+          href="/auth/signup"
+          className="flex items-center hover:text-blue-500 transition-colors"
+        >
           Sign Up
         </Link>
       </li>

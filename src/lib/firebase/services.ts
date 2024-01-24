@@ -45,14 +45,14 @@ export const register = async (
   }
 };
 
-export const login = async (email: string, password: string): Promise<void> => {
+export const login = async (email: string, password: string): Promise<string> => {
   const auth = getAuth(app);
 
   try {
     const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     const token = await user.getIdToken();
-    console.log(`Token: ${token}`);
+    return token;
   } catch (error) {
     // Assuming error is of type FirebaseError, which is typically the case with Firebase operations
     if (error instanceof Error) {
