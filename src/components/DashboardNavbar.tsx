@@ -1,12 +1,34 @@
 "use client";
-import React from "react";
-import { Navbar, Collapse, Typography, IconButton, NavbarProps } from "@material-tailwind/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { Navbar } from "@material-tailwind/react";
 import Sidebar from "./Sidebar";
+import axios from "axios";
 
 const DashboardNavbar = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    axios
+      .get("http://localhost:3333/api/auth/verify-token", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        const { name, email, isAdmin } = res.data.data;
+        setName(name);
+        setEmail(email);
+        setIsAdmin(isAdmin);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, []);
+
   return (
     <Navbar
       shadow={false}
@@ -19,7 +41,7 @@ const DashboardNavbar = () => {
         <Sidebar />
 
         <div>
-          <p className="font-bold text-info-100 text-body2 lg:text-body1">Hello, User</p>
+          <p className="font-bold text-info-100 text-body2 lg:text-body1">Hello, {name}</p>
         </div>
       </div>
     </Navbar>
