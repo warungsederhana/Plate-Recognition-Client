@@ -2,23 +2,27 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Drawer,
-  Button,
-  Typography,
-  IconButton,
-  List,
-  ListItem,
-  ListItemPrefix,
-  ListItemSuffix,
-  Chip,
-} from "@material-tailwind/react";
-import CustomNavbar from "./CustomNavbar";
+import { Drawer, IconButton, List, ListItem, ListItemPrefix } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { destroyCookie } from "nookies";
+import path from "path";
 
 export function Sidebar() {
   const [open, setOpen] = React.useState(false);
   const openDrawer = () => setOpen(true);
   const closeDrawer = () => setOpen(false);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    destroyCookie(null, "access_token", {
+      path: "/",
+    });
+    localStorage.removeItem("access_token");
+    router.push("/");
+    toast.success("Logout berhasil");
+  };
 
   return (
     <React.Fragment>
@@ -84,12 +88,20 @@ export function Sidebar() {
 
           <hr className="my-2 border-blue-gray-50" />
 
-          <ListItem placeholder={undefined}>
+          <ListItem placeholder={undefined} onClick={handleLogout}>
             <ListItemPrefix placeholder={undefined}>
               <Image src={"/img/sign-out.svg"} alt={""} width={24} height={24} />
             </ListItemPrefix>
             Log Out
           </ListItem>
+          {/* <button>
+            <ListItem placeholder={undefined}>
+              <ListItemPrefix placeholder={undefined}>
+                <Image src={"/img/sign-out.svg"} alt={""} width={24} height={24} />
+              </ListItemPrefix>
+              Log Out
+            </ListItem>
+          </button> */}
         </List>
       </Drawer>
     </React.Fragment>

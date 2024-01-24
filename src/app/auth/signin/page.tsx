@@ -6,7 +6,7 @@ import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
 import PasswordInput from "@/components/PasswordInput";
 import { login, loginWithGoogle } from "@/lib/firebase/services";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthError } from "firebase/auth";
 import { setCookie } from "nookies";

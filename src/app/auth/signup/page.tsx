@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { Card, Input, Button } from "@material-tailwind/react";
 import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PasswordInput from "@/components/PasswordInput";
 import { loginWithGoogle, register } from "@/lib/firebase/services";
