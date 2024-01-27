@@ -1,3 +1,4 @@
+import { getDisplayName } from "next/dist/shared/lib/utils";
 import app from "./init";
 import {
   getAuth,
@@ -9,11 +10,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 
-export const register = async (
-  email: string,
-  password: string,
-  confirmationPassword: string
-): Promise<void> => {
+export const register = async (email: string, password: string, confirmationPassword: string) => {
   if (password !== confirmationPassword) {
     throw new Error("Passwords do not match.");
   }
@@ -28,7 +25,16 @@ export const register = async (
     );
     const user = userCredential.user;
     const token = await user.getIdToken();
-    console.log(`Token: ${token}`);
+    const userdata = {
+      id: user?.uid,
+      email: user?.email,
+      displayName: user?.displayName,
+      token: token,
+    };
+    return {
+      success: true,
+      data: userdata,
+    };
   } catch (error) {
     // Assuming error is of type FirebaseError, which is typically the case with Firebase operations
     if (error instanceof Error) {
@@ -36,7 +42,11 @@ export const register = async (
       const errorMessage = error.message;
       console.error(`Error Code: ${errorCode}, Message: ${errorMessage}`);
       // Consider re-throwing the error or handling it according to your application's needs
-      throw error;
+      return {
+        success: false,
+        errorCode: errorCode,
+        errorMessage: errorMessage,
+      };
     } else {
       // Handle unexpected errors that are not Error instances
       console.error("An unexpected error occurred", error);
@@ -77,11 +87,21 @@ export const loginWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider);
     // Dapat menggunakan Google Access Token dan user info di sini
     const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential?.accessToken;
+    // const token = credential?.accessToken;
     const user = result.user;
+    const token = await user.getIdToken();
 
-    console.log(`Token: ${token}`);
-    console.log(`User: ${user}`);
+    const userData = {
+      id: user?.uid,
+      email: user?.email,
+      displayName: user?.displayName,
+      token: token,
+    };
+
+    return {
+      success: true,
+      data: userData,
+    };
   } catch (error) {
     // Handle Errors here
     console.error("Error during Google login", error);
