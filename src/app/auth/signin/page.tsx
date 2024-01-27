@@ -117,6 +117,34 @@ const SignInPage = () => {
     }
   };
 
+  const handleLoginWithGoogle = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setIsLoading(true);
+    e.preventDefault();
+
+    try {
+      const res = await loginWithGoogle();
+
+      if (res?.success === false) {
+        setIsLoading(false);
+        toast.error("Gagal login.");
+        return;
+      }
+
+      localStorage.setItem("access_token", `Bearer ${res?.data?.token}`);
+      setCookie(null, "access_token", res?.data?.token || "", {
+        maxAge: 30 * 24 * 60 * 60, // 30 hari
+        path: "/",
+      });
+
+      setIsLoading(false);
+      router.push("/dashboard/scan");
+      toast.success("Login berhasil.");
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <section className="flex flex-wrap w-full min-h-screen">
@@ -182,7 +210,8 @@ const SignInPage = () => {
                 className="mt-6 bg-white flex flex-row justify-center items-center"
                 fullWidth
                 placeholder={undefined}
-                onClick={loginWithGoogle}
+                disabled={isLoading ? true : false}
+                onClick={(e) => handleLoginWithGoogle(e)}
               >
                 <Image
                   className="m-0 p-0"
