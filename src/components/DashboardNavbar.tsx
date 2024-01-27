@@ -5,24 +5,22 @@ import Sidebar from "./Sidebar";
 import axios from "axios";
 
 const DashboardNavbar = () => {
-  const [name, setName] = useState("");
+  const [nama, setNama] = useState("");
   const [email, setEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     axios
-      .get("http://localhost:3333/api/auth/verify-token", {
+      .get("http://localhost:3344/api/auth/verify-token", {
         headers: {
           Authorization: token,
         },
       })
       .then((res) => {
-        console.log(res.data.data);
-        const { name, email, isAdmin } = res.data.data;
-        setName(name);
+        const { id, nama, email, isAdmin } = res.data.data;
+        setNama(nama);
         setEmail(email);
-        setIsAdmin(isAdmin);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -41,7 +39,7 @@ const DashboardNavbar = () => {
         <Sidebar />
 
         <div>
-          <p className="font-bold text-info-100 text-body2 lg:text-body1">Hello, {name}</p>
+          <p className="font-bold text-info-100 text-body2 lg:text-body1">Hello, {nama}</p>
         </div>
       </div>
     </Navbar>

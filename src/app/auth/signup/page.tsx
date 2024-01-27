@@ -148,7 +148,7 @@ const SignUpPage = () => {
       const data = {
         id: res?.data?.id,
         email: res?.data?.email,
-        nama: res?.data?.displayName,
+        nama: res?.data?.nama,
       };
 
       localStorage.setItem("access_token", `Bearer ${res?.data?.token}`);

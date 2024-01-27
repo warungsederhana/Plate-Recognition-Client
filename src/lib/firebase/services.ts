@@ -1,4 +1,4 @@
-import { getDisplayName } from "next/dist/shared/lib/utils";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import app from "./init";
 import {
   getAuth,
@@ -9,6 +9,14 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import axios from "axios";
+
+interface UserData {
+  id: string;
+  email: string;
+  nama: string;
+  token: string;
+}
 
 export const register = async (email: string, password: string, confirmationPassword: string) => {
   if (password !== confirmationPassword) {
@@ -85,25 +93,71 @@ export const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
 
     const result = await signInWithPopup(auth, provider);
-    // Dapat menggunakan Google Access Token dan user info di sini
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    // const token = credential?.accessToken;
     const user = result.user;
     const token = await user.getIdToken();
 
+    let userExists;
+    try {
+      userExists = await checkUserInFirestore(user.uid);
+    } catch (error) {
+      console.error("Error checking user in Firestore", error);
+      // Menangani error atau mengembalikan nilai default
+      userExists = false; // atau mengembalikan error, tergantung kasus penggunaanmu
+    }
+
     const userData = {
-      id: user?.uid,
-      email: user?.email,
-      displayName: user?.displayName,
+      id: user.uid,
+      email: user.email || "",
+      nama: user.displayName || "",
       token: token,
     };
+
+    if (!userExists) {
+      try {
+        await createUserInFirestore(userData);
+      } catch (error) {
+        console.error("Error creating user in Firestore", error);
+        // Menangani error atau melempar kembali jika perlu
+        throw error;
+      }
+    }
 
     return {
       success: true,
       data: userData,
     };
-  } catch (error) {
-    // Handle Errors here
+  } catch (error: any) {
     console.error("Error during Google login", error);
+    return {
+      success: false,
+      error: error.message as string, // Pastikan ini adalah string
+    };
+  }
+};
+
+const checkUserInFirestore = async (uid: string) => {
+  const db = getFirestore(app);
+  try {
+    const userRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userRef);
+    return docSnap.exists();
+  } catch (error) {
+    console.error("Error checking user in database", error);
+    throw error;
+  }
+};
+
+const createUserInFirestore = async (user: UserData) => {
+  try {
+    const userData = {
+      id: user.id,
+      email: user.email,
+      nama: user.nama,
+    };
+    await axios.post("http://localhost:3344/api/auth/signup", userData);
+    console.log("User created in Firestore");
+  } catch (error) {
+    console.error("Error creating user in Firestore", error);
+    throw error;
   }
 };

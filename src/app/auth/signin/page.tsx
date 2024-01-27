@@ -124,23 +124,23 @@ const SignInPage = () => {
     try {
       const res = await loginWithGoogle();
 
-      if (res?.success === false) {
-        setIsLoading(false);
-        toast.error("Gagal login.");
-        return;
+      if (res.success) {
+        // Simpan token di tempat yang lebih aman jika memungkinkan
+        localStorage.setItem("access_token", `Bearer ${res?.data?.token}`);
+        setCookie(null, "access_token", res?.data?.token || "", {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+        });
+
+        router.push("/dashboard/scan");
+        toast.success("Login berhasil.");
+      } else {
+        toast.error("Gagal login: " + res.error);
       }
-
-      localStorage.setItem("access_token", `Bearer ${res?.data?.token}`);
-      setCookie(null, "access_token", res?.data?.token || "", {
-        maxAge: 30 * 24 * 60 * 60, // 30 hari
-        path: "/",
-      });
-
-      setIsLoading(false);
-      router.push("/dashboard/scan");
-      toast.success("Login berhasil.");
     } catch (error) {
-      console.log(error);
+      console.error("Login error:", error);
+      toast.error("Terjadi kesalahan saat login: " + error);
+    } finally {
       setIsLoading(false);
     }
   };

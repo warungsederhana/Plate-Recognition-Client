@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
         },
       };
 
-      const verifyTokenURL = "http://localhost:3333/api/auth/verify-token";
+      const verifyTokenURL = "http://localhost:3344/api/auth/verify-token";
       const res = await fetch(verifyTokenURL, requestOption);
       const resData = await res.json();
 
