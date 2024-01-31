@@ -85,6 +85,15 @@ export function Sidebar() {
             </ListItem>
           </Link>
 
+          <Link href="/dashboard/profile">
+            <ListItem placeholder={undefined}>
+              <ListItemPrefix placeholder={undefined}>
+                <Image src={"/img/user.svg"} alt={""} width={24} height={24} />
+              </ListItemPrefix>
+              Profile
+            </ListItem>
+          </Link>
+
           <hr className="my-2 border-blue-gray-50" />
 
           <ListItem placeholder={undefined} onClick={handleLogout}>

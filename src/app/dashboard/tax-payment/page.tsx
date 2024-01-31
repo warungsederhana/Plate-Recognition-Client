@@ -5,7 +5,7 @@ import { Input, Button } from "@material-tailwind/react";
 const TaxPaymentPage = () => {
   return (
     <>
-      <section className="mx-auto w-full h-full min-h-svh flex flex-col gap-2 px-8 mb-16 justify-start lg:px-28">
+      <section className="mx-auto w-full h-full flex flex-col gap-2 px-8 mb-16 justify-start lg:px-28">
         {/* SECTION 1 */}
 
         <div className="w-full flex flex-col gap-2 pt-6 ">

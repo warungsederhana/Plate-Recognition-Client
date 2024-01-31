@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { serialize } from "cookie";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const accessToken = request.cookies.get("access_token");
+  const accessToken = request.cookies.get("access_token")?.value;
+  console.log(`Pathname: ${pathname}`);
 
+  // Jika ada access token dan request ke halaman auth
   if (accessToken) {
-    const token = "Bearer " + accessToken?.value;
+    const token = "Bearer " + accessToken;
     try {
       const requestOption = {
         method: "GET",
@@ -19,24 +22,46 @@ export async function middleware(request: NextRequest) {
       const res = await fetch(verifyTokenURL, requestOption);
       const resData = await res.json();
 
-      // Jika token tidak valid, alihkan ke login
-      if (!resData?.success) {
-        return NextResponse.redirect(new URL("/auth/signin", request.url));
+      // Jika token tidak valid atau tidak ada
+      if (!resData.success) {
+        // Menghapus cookie dengan mengatur ulang
+        const response = NextResponse.redirect(new URL("/auth/signin", request.url));
+        response.headers.append(
+          "Set-Cookie",
+          serialize("access_token", "", {
+            path: "/",
+            expires: new Date(0), // tanggal di masa lalu untuk menghapus cookie
+          })
+        );
+        return response;
       }
 
       // Jika sudah login, tidak boleh mengakses halaman sign-in dan sign-up
-      if (pathname === "/auth/signin" || pathname === "/auth/signup") {
+      if (pathname === "/auth/signin" || pathname === "/auth/signup" || pathname === "/") {
         return NextResponse.redirect(new URL("/dashboard/scan", request.url));
       }
     } catch (error) {
       console.error(error);
-      return NextResponse.redirect(new URL("/error", request.url));
+      // Menghapus cookie jika terjadi error saat verifikasi
+      const response = NextResponse.redirect(new URL("/auth/signin", request.url));
+      localStorage.removeItem("access_token");
+      response.headers.append(
+        "Set-Cookie",
+        serialize("access_token", "", {
+          path: "/",
+          expires: new Date(0), // tanggal di masa lalu untuk menghapus cookie
+        })
+      );
+      return response;
     }
-  } else if (pathname.startsWith("/dashboard")) {
-    // Jika tidak ada token dan pathname adalah dashboard, alihkan ke login
+  }
+
+  // Jika tidak ada token dan mencoba mengakses halaman dashboard
+  if (!accessToken && pathname.startsWith("/dashboard")) {
+    // Redirect ke halaman login
     return NextResponse.redirect(new URL("/auth/signin", request.url));
   }
 
-  // Lanjutkan ke middleware berikutnya
+  // Untuk semua request lain, lanjutkan tanpa perubahan
   return NextResponse.next();
 }
