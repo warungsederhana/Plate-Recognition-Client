@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { Navbar } from "@material-tailwind/react";
 import Sidebar from "./Sidebar";
 import axios from "axios";
@@ -36,11 +37,16 @@ const DashboardNavbar = () => {
       placeholder={undefined}
     >
       <div className="flex items-center justify-between text-blue-gray-900">
-        <Sidebar />
-
-        <div>
-          <p className="font-bold text-info-100 text-body2 lg:text-body1">Hello, {nama}</p>
+        <div className="text-header6 lg:text-header5 text-primary-700 font-bold">
+          <div className="flex flex-row items-center">
+            <Image src={"/img/app-logo-2.png"} alt={""} width={50} height={50} />
+            <h1 className="hidden md:block text-header6 lg:text-header5 text-info-100 font-bold">
+              Plate Recognition
+            </h1>
+          </div>
         </div>
+
+        <Sidebar />
       </div>
     </Navbar>
   );
