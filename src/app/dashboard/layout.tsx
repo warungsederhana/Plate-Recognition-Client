@@ -4,11 +4,11 @@ import Footer from "@/components/Footer";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <DashboardNavbar />
-      <div>{children}</div>
+      <main className="flex-grow">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 };
 
