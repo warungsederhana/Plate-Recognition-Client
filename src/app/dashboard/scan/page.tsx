@@ -4,6 +4,7 @@ import CustomDropZone from "@/components/CustomDropZone";
 import { Input, Button } from "@material-tailwind/react";
 import { FileWithPath } from "react-dropzone";
 import { useState } from "react";
+import DashboardNavbar from "../../../components/DashboardNavbar";
 
 const ScanPage = () => {
   const [hasFile, setHasFile] = useState(false);
@@ -35,6 +36,7 @@ const ScanPage = () => {
 
   return (
     <>
+      <DashboardNavbar />
       <section className="mx-auto w-full h-full min-h-screen flex flex-col gap-2 px-8 mb-16 items-center lg:px-28">
         {/* SECTION 1 */}
         <div className="w-full flex flex-col gap-2 pt-6 ">

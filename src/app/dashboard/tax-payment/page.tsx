@@ -1,10 +1,12 @@
 "use client";
 import React from "react";
 import { Input, Button } from "@material-tailwind/react";
+import DashboardNavbar from "../../../components/DashboardNavbar";
 
 const TaxPaymentPage = () => {
   return (
     <>
+      <DashboardNavbar />
       <section className="mx-auto w-full h-full flex flex-col gap-2 px-8 mb-16 justify-start lg:px-28">
         {/* SECTION 1 */}
 
