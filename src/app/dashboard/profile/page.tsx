@@ -3,6 +3,7 @@ import { Button, Input, Textarea } from "@material-tailwind/react";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import DashboardNavbar from "../../../components/DashboardNavbar";
 
 const ProfilePage = () => {
   const [nama, setNama] = React.useState("");
@@ -33,6 +34,7 @@ const ProfilePage = () => {
 
   return (
     <>
+      <DashboardNavbar />
       <section className="mx-auto w-full h-full min-h-max flex flex-col items-center gap-2 px-8 mb-16 lg:px-28">
         <div className="w-full flex flex-col items-center justify-center gap-2 pt-6 lg:justify-normal lg:flex-row lg:gap-6">
           <div className="flex flex-col gap-2 w-64 lg:w-72">

@@ -25,7 +25,7 @@ export function Sidebar() {
         },
       })
       .then((res) => {
-        const { id, nama, email, isAdmin } = res.data.data;
+        const { nama } = res.data.data;
         setNama(nama);
       })
       .catch((error) => {
